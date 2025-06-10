@@ -1,0 +1,66 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Upcoming Launches</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+</head>
+<body class="bg-black">
+    <ul>
+        <div class="container-fluid pe-5">
+        {% for launch in launches %}
+            <div class="card border-secondary mb-4 p-3 bg-dark text-white">
+                <div class="d-flex mb-2">
+                    <div class="me-auto p-2">
+                        <h4 class="mb-0">{{ launch['mission']['name'] }}</h4>
+                    </div>
+                    <div class="card border-dark p-1 bg-transparent text-white">
+                        <p class="p-2" style="font-family: orbitron; color: lime;">TIME TILL LAUNCH:</p>
+                    </div>
+                    <div class="card mb-5 p-1 bg-black">
+                        <div id="countdown-{{ loop.index }}" data-launch-time="{{ launch['window_start'] }}"class="p-2" style="font-family: orbitron; color: lime;"></div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row">
+                    <div class="p-2 fst-italic fs-5 text-secondary">{{ launch['rocket']['configuration']['full_name'] }}</div>
+                </div>
+                <div class="d-flex flex-row">
+                    <p class="p-2 fs-5">
+                        Launch Service Provider: <span style="font-size: 15px; color: #6c757d">{{ launch['launch_service_provider']['name'] }}</span><br>
+                        Datetime: <span style="font-size: 15px; color: #6c757d">{{ launch['format_datetime'] }}</span><br>
+                        Location: <span style="font-size: 15px; color: #6c757d">{{ launch['pad']['name'] }}</span><br>
+                        Status: <span style="font-size: 15px; color: #6c757d">{{ launch['status']['name'] }}</span>
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </ul>
+</body>
+
+<script>
+    const countdownElements = document.querySelectorAll('[id^="countdown-"]');
+
+    countdownElements.forEach(el => {
+        const launchTime = new Date(el.dataset.launchTime);
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = launchTime - now;
+            if (diff <= 0) {
+                el.innerText = "Launched!";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            el.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000); // updates every second
+    });
+</script>
