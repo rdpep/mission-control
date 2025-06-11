@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from datetime import datetime
 import requests
 
@@ -17,13 +17,22 @@ def homepage():
 
 @app.route('/launches')
 def launches():
+    provider_filter = request.args.get('provider')
+    location_filter = request.args.get('location')
+
     response = requests.get('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=10')
     data = response.json()
     raw_launches = data['results'] # List of dicts representing launches
-    formatted_launches = format_launches(raw_launches)
 
+    if provider_filter:
+        raw_launches = [l for l in raw_launches if l['launch_service_provider']['name'] == provider_filter]
+    if location_filter:
+        raw_launches = [l for l in raw_launches if l['pad']['name'] == location_filter]
+    
+    formatted_launches = format_launches(raw_launches)
     return render_template('launches.html', launches=formatted_launches)
 
 
+# REMOVE BEFORE LIVE IMPLEMENTATION
 if __name__ == '__main__':
     app.run(debug=True)

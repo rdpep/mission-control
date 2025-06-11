@@ -6,34 +6,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
 <body class="bg-black">
+    <form method="GET" action="/launches" class="mx-auto p-2 text-center">
+        <label style="color: white;" for="provider">Launch Provider:</label>
+        <select name="provider" id="provider" class="form-select w-auto d-inline mx-2">
+            <option value="">ALL</option>
+            <option value="China Aerospace Science and Technology Corporation">China Aerospace Science and Technology Corporation</option>
+            <option value="NASA">NASA</option>
+            <option value="Rocket Lab">Rocket Lab</option>
+            <option value="Roscosmos">Roscosmos</option>
+            <option value="Russian Space Forces">Russian Space Forces</option>
+            <option value="SpaceX">SpaceX</option>
+            <option value="United Launch Alliance">United Launch Alliance</option>
+        </select>
+
+        <label style="color: white;" for="location">Location:</label>
+        <select name="location" id="location" class="form-select w-auto d-inline mx-2">
+            <option value="">ALL</option>
+            <option value="35/1">35/1</option>
+            <option value="Launch Area 4 (SLS-2 / 603)">Launch Area 4 (SLS-2 / 603)</option>
+            <option value="Launch Complex 39A">Launch Complex 39A</option>
+            <option value="Launch Complex 3 (LC-3/LA-1)">Launch Complex 3 (LC-3/LA-1)</option>
+            <option value="Rocket Lab Launch Complex 1A">Rocket Lab Launch Complex 1A</option>
+            <option value="Space Launch Complex 40">Space Launch Complex 40</option>
+            <option value="Space Launch Complex 41">Space Launch Complex 41</option>
+            <option value="Space Launch Complex 4E">Space Launch Complex 4E</option>
+        </select>
+
+        <button type="submit" class="btn btn-secondary">Filter</button>
+    </form>
     <ul>
         <div class="container-fluid pe-5">
-        {% for launch in launches %}
-            <div class="card border-secondary mb-4 p-3 bg-dark text-white">
-                <div class="d-flex mb-2">
-                    <div class="me-auto p-2">
-                        <h4 class="mb-0">{{ launch['mission']['name'] }}</h4>
+            {% for launch in launches %}
+                <div class="card border-secondary mb-4 p-3 bg-dark text-white">
+                    <div class="d-flex mb-2">
+                        <div class="me-auto p-2">
+                            <h4 class="mb-0">{{ launch['mission']['name'] }}</h4>
+                        </div>
+                        <div class="card border-dark p-1 bg-transparent text-white">
+                            <p class="p-2" style="font-family: orbitron; color: lime;">TIME TILL LAUNCH:</p>
+                        </div>
+                        <div class="card mb-5 p-1 bg-black">
+                            <div id="countdown-{{ loop.index }}" data-launch-time="{{ launch['window_start'] }}"class="p-2" style="font-family: orbitron; color: lime;"></div>
+                        </div>
                     </div>
-                    <div class="card border-dark p-1 bg-transparent text-white">
-                        <p class="p-2" style="font-family: orbitron; color: lime;">TIME TILL LAUNCH:</p>
+                    <div class="d-flex flex-row">
+                        <div class="p-2 fst-italic fs-5 text-secondary">{{ launch['rocket']['configuration']['full_name'] }}</div>
                     </div>
-                    <div class="card mb-5 p-1 bg-black">
-                        <div id="countdown-{{ loop.index }}" data-launch-time="{{ launch['window_start'] }}"class="p-2" style="font-family: orbitron; color: lime;"></div>
+                    <div class="d-flex flex-row">
+                        <p class="p-2 fs-5">
+                            Launch Service Provider: <span style="font-size: 15px; color: #6c757d">{{ launch['launch_service_provider']['name'] }}</span><br>
+                            Datetime: <span style="font-size: 15px; color: #6c757d">{{ launch['format_datetime'] }}</span><br>
+                            Location: <span style="font-size: 15px; color: #6c757d">{{ launch['pad']['name'] }}</span><br>
+                            Status: <span style="font-size: 15px; color: #6c757d">{{ launch['status']['name'] }}</span>
+                        </p>
                     </div>
                 </div>
-                <div class="d-flex flex-row">
-                    <div class="p-2 fst-italic fs-5 text-secondary">{{ launch['rocket']['configuration']['full_name'] }}</div>
-                </div>
-                <div class="d-flex flex-row">
-                    <p class="p-2 fs-5">
-                        Launch Service Provider: <span style="font-size: 15px; color: #6c757d">{{ launch['launch_service_provider']['name'] }}</span><br>
-                        Datetime: <span style="font-size: 15px; color: #6c757d">{{ launch['format_datetime'] }}</span><br>
-                        Location: <span style="font-size: 15px; color: #6c757d">{{ launch['pad']['name'] }}</span><br>
-                        Status: <span style="font-size: 15px; color: #6c757d">{{ launch['status']['name'] }}</span>
-                    </p>
-                </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
         </div>
     </ul>
 </body>
