@@ -123,6 +123,7 @@
         <label style="color: white;" for="provider">Launch Provider:</label>
         <select name="provider" id="provider" class="form-select w-auto d-inline mx-2">
             <option value="">ALL</option>
+            <option value="Arianespace">Arianespace</option>
             <option value="Blue Origin">Blue Origin</option>
             <option value="China Aerospace Science and Technology Corporation">China Aerospace Science and Technology Corporation</option>
             <option value="Gilmour Space Technologies">Gilmour Space Technologies</option>
@@ -142,8 +143,11 @@
             <option value="">ALL</option>
             <option value="31/6">31/6</option>
             <option value="35/1">35/1</option>
+            <option value="Ariane Launch Area 1 (ELV)">Ariane Launch Area 1 (ELV)</option>
+            <option value="Ariane Launch Area 4">Ariane Launch Area 4</option>
             <option value="Commercial LC-1">Commercial LC-1</option>
             <option value="Commercial LC-2">Commercial LC-2</option>
+            <option value="Cosmodrome Site 1S">Cosmodrome Site 1S</option>
             <option value="Eris Pad">Eris Pad</option>
             <option value="Launch Area 4 (SLS-2 / 603)">Launch Area 4 (SLS-2 / 603)</option>
             <option value="Launch Complex 39A">Launch Complex 39A</option>
@@ -198,6 +202,28 @@
             {% endif %}
         </div>
     </ul>
+
+    <nav class="text-center">
+        <ul class="pagination justify-content-center">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('launches', page=page-1, provider=request.args.get('provider'), location=request.args.get('location')) }}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('launches', page=p, provider=request.args.get('provider'), location=request.args.get('location')) }}">{{ p }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('launches', page=page+1, provider=request.args.get('provider'), location=request.args.get('location')) }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
 </body>
 
 <script>
