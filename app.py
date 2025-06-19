@@ -50,6 +50,8 @@ def launches():
         map_locals.append({
             'latitude': lat_offset,
             'longitude': lon_offset,
+            'provider': launch['launch_service_provider']['name'],
+            'mission': launch['mission']['name'],
             'status': 'Launched' if launch['status']['name'] == 'Launch Successful' else 'Upcoming'
         })
 

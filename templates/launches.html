@@ -51,6 +51,16 @@
         <h1 class="holo-glitch-title">Mission Control</h1>
     </div> 
     <div id="globeViz" class="mx-auto" style="width: 800px; height: 600px;"></div>
+    <div id="globe-tooltip" style="
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        pointer-events: none;
+        z-index: 10;"
+    ></div>
     <script>
         const map_locations = {{ map_locals | tojson }};
 
@@ -63,7 +73,28 @@
             .pointRadius(d => d.status === 'Launched' ? 0.2 : 0.4)
             .pointAltitude(d => d.status === 'Launched' ? 0.02 : 0.01)
             .backgroundColor('rgba(0, 0, 0, 0)')
-            .pointsData(map_locations);
+            .pointsData(map_locations)
+            .onPointHover(handleHover);
+
+        const tooltip = document.getElementById('globe-tooltip');
+
+        function handleHover(point) {
+            if (point) {
+                tooltip.innerHTML = `
+                    <strong>Mission:</strong> ${point.mission}<br>
+                    <strong>Provider:</strong> ${point.provider}<br>
+                    <strong>Status:</strong> ${point.status}<br>
+                `;
+                tooltip.style.display = 'block';
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('mousemove', (event) => {
+            tooltip.style.top = (event.clientY + 15) + 'px';
+            tooltip.style.left = (event.clientX + 15) + 'px';
+        });
 
         world(globeContainer);
 
@@ -95,6 +126,7 @@
             <option value="Blue Origin">Blue Origin</option>
             <option value="China Aerospace Science and Technology Corporation">China Aerospace Science and Technology Corporation</option>
             <option value="Gilmour Space Technologies">Gilmour Space Technologies</option>
+            <option value="Indian Space Research Organization">Indian Space Research Organization</option>
             <option value="Japan Aerospace Exploration Agency">Japan Aerospace Exploration Agency</option>
             <option value="NASA">NASA</option>
             <option value="Rocket Lab">Rocket Lab</option>
@@ -120,6 +152,7 @@
             <option value="Rocket Lab Launch Complex 1A">Rocket Lab Launch Complex 1A</option>
             <option value="Rocket Lab Launch Complex 2 (Launch Area 0 C)">Rocket Lab Launch Complex 2 (Launch Area 0 C)</option>
             <option value="Launch Complex 39A">Launch Complex 39A</option>
+            <option value="Satish Dhawan Space Centre Second Launch Pad">Satish Dhawan Space Centre Second Launch Pad</option>
             <option value="Space Launch Complex 40">Space Launch Complex 40</option>
             <option value="Space Launch Complex 41">Space Launch Complex 41</option>
             <option value="Space Launch Complex 4E">Space Launch Complex 4E</option>
