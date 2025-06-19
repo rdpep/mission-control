@@ -1,19 +1,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Upcoming Launches</title>
+    <title>Mission Control</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <!-- Globe.gl -->
+    <script src="https://unpkg.com/globe.gl"></script>
+    <style>
+        @keyframes glitchFlicker {
+            0% {
+                opacity: 1;
+                transform: none;
+            } 
+            5% {
+                opacity: 0.8;
+                transform: translate(1px, -1px) skew(-0.5deg);
+            }
+            10% {
+                opacity: 0.6;
+                transform: translate(-1px, 1px) skew(0.5deg);
+            }
+            15% {
+                opacity: 0.9;
+                transform: none;
+            }
+            20% {
+                opacity: 0.4;
+                transform: translate(2px, -1px) skew(-1deg);
+            }
+            25%, 100% {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .holo-glitch-title {
+            font-family: 'orbitron'; 
+            font-size: 4rem; 
+            color: rgb(6, 214, 200); 
+            text-shadow: 0 0 10px lime;
+            letter-spacing: 2px;
+            margin-top: 1rem;
+            animation: glitchFlicker 2s infinite;
+        }
+    </style>
 </head>
+
 <body class="bg-black">
+    <div class="mx-auto p-2 text-center">
+        <h1 class="holo-glitch-title">Mission Control</h1>
+    </div> 
+    <div id="globeViz" class="mx-auto" style="width: 800px; height: 600px;"></div>
+    <script>
+        const map_locations = {{ map_locals | tojson }};
+
+        const globeContainer = document.getElementById('globeViz');
+        const world = Globe()
+            .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+            .pointLat('latitude')
+            .pointLng('longitude')
+            .pointColor(d => d.status === 'Launched' ? 'green' : 'blue')
+            .pointRadius(d => d.status === 'Launched' ? 0.2 : 0.4)
+            .pointAltitude(d => d.status === 'Launched' ? 0.02 : 0.01)
+            .backgroundColor('rgba(0, 0, 0, 0)')
+            .pointsData(map_locations);
+
+        world(globeContainer);
+
+        function resizeGlobe() {
+            const width = globeContainer.offsetWidth;
+            const height = globeContainer.offsetHeight;
+            world.width(width);
+            world.height(height);
+        }
+
+        resizeGlobe();
+        window.addEventListener('resize', resizeGlobe);
+    </script>
+    <div class="d-flex justify-content-center align-items-center mb-5">
+        <div class="me-4 d-flex align-items-center">
+            <span class="me-2" style="color: white;">Launched Rockets:</span>
+            <span style="width: 15px; height: 15px; background-color: green; border-radius: 50%; display: inline-block;"></span>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-2" style="color: white;">Upcoming Launches:</span>
+            <span style="width: 15px; height: 15px; background-color: blue; border-radius: 50%; display: inline-block;"></span>
+        </div>
+    </div>
+
     <form method="GET" action="/launches" class="mx-auto p-2 text-center">
         <label style="color: white;" for="provider">Launch Provider:</label>
         <select name="provider" id="provider" class="form-select w-auto d-inline mx-2">
             <option value="">ALL</option>
+            <option value="Blue Origin">Blue Origin</option>
             <option value="China Aerospace Science and Technology Corporation">China Aerospace Science and Technology Corporation</option>
+            <option value="Gilmour Space Technologies">Gilmour Space Technologies</option>
+            <option value="Japan Aerospace Exploration Agency">Japan Aerospace Exploration Agency</option>
             <option value="NASA">NASA</option>
             <option value="Rocket Lab">Rocket Lab</option>
             <option value="Roscosmos">Roscosmos</option>
+            <option value="Russian Federal Space Agency (ROSCOSMOS)">Russian Federal Space Agency (ROSCOSMOS)</option>
             <option value="Russian Space Forces">Russian Space Forces</option>
             <option value="SpaceX">SpaceX</option>
             <option value="United Launch Alliance">United Launch Alliance</option>
@@ -22,46 +108,61 @@
         <label style="color: white;" for="location">Location:</label>
         <select name="location" id="location" class="form-select w-auto d-inline mx-2">
             <option value="">ALL</option>
+            <option value="31/6">31/6</option>
             <option value="35/1">35/1</option>
+            <option value="Commercial LC-1">Commercial LC-1</option>
+            <option value="Commercial LC-2">Commercial LC-2</option>
+            <option value="Eris Pad">Eris Pad</option>
             <option value="Launch Area 4 (SLS-2 / 603)">Launch Area 4 (SLS-2 / 603)</option>
             <option value="Launch Complex 39A">Launch Complex 39A</option>
             <option value="Launch Complex 3 (LC-3/LA-1)">Launch Complex 3 (LC-3/LA-1)</option>
+            <option value="Orbital Launch Mount A">Orbital Launch Mount A</option>
             <option value="Rocket Lab Launch Complex 1A">Rocket Lab Launch Complex 1A</option>
+            <option value="Rocket Lab Launch Complex 2 (Launch Area 0 C)">Rocket Lab Launch Complex 2 (Launch Area 0 C)</option>
+            <option value="Launch Complex 39A">Launch Complex 39A</option>
             <option value="Space Launch Complex 40">Space Launch Complex 40</option>
             <option value="Space Launch Complex 41">Space Launch Complex 41</option>
             <option value="Space Launch Complex 4E">Space Launch Complex 4E</option>
+            <option value="West Texas Suborbital Launch Site/ Corn Ranch">West Texas Suborbital Launch Site/ Corn Ranch</option>
+            <option value="Yoshinobu Launch Complex LP-1">Yoshinobu Launch Complex LP-1</option>
         </select>
 
         <button type="submit" class="btn btn-secondary">Filter</button>
     </form>
     <ul>
         <div class="container-fluid pe-5">
-            {% for launch in launches %}
-                <div class="card border-secondary mb-4 p-3 bg-dark text-white">
-                    <div class="d-flex mb-2">
-                        <div class="me-auto p-2">
-                            <h4 class="mb-0">{{ launch['mission']['name'] }}</h4>
+            {%if launches%}
+                {% for launch in launches %}
+                    <div class="card border-secondary mb-4 p-3 bg-dark text-white">
+                        <div class="d-flex mb-2">
+                            <div class="me-auto p-2">
+                                <h4 class="mb-0">{{ launch['mission']['name'] }}</h4>
+                            </div>
+                            <div class="card border-dark p-1 bg-transparent text-white">
+                                <p class="p-2" style="font-family: orbitron; color: lime;">TIME TILL LAUNCH:</p>
+                            </div>
+                            <div class="card mb-5 p-1 bg-black">
+                                <div id="countdown-{{ loop.index }}" data-launch-time="{{ launch['window_start'] }}"class="p-2" style="font-family: orbitron; color: lime;"></div>
+                            </div>
                         </div>
-                        <div class="card border-dark p-1 bg-transparent text-white">
-                            <p class="p-2" style="font-family: orbitron; color: lime;">TIME TILL LAUNCH:</p>
+                        <div class="d-flex flex-row">
+                            <div class="p-2 fst-italic fs-5 text-secondary">{{ launch['rocket']['configuration']['full_name'] }}</div>
                         </div>
-                        <div class="card mb-5 p-1 bg-black">
-                            <div id="countdown-{{ loop.index }}" data-launch-time="{{ launch['window_start'] }}"class="p-2" style="font-family: orbitron; color: lime;"></div>
+                        <div class="d-flex flex-row">
+                            <p class="p-2 fs-5">
+                                Launch Service Provider: <span style="font-size: 15px; color: #6c757d">{{ launch['launch_service_provider']['name'] }}</span><br>
+                                Datetime: <span style="font-size: 15px; color: #6c757d">{{ launch['format_datetime'] }}</span><br>
+                                Location: <span style="font-size: 15px; color: #6c757d">{{ launch['pad']['name'] }}</span><br>
+                                Status: <span style="font-size: 15px; color: #6c757d">{{ launch['status']['name'] }}</span>
+                            </p>
                         </div>
                     </div>
-                    <div class="d-flex flex-row">
-                        <div class="p-2 fst-italic fs-5 text-secondary">{{ launch['rocket']['configuration']['full_name'] }}</div>
-                    </div>
-                    <div class="d-flex flex-row">
-                        <p class="p-2 fs-5">
-                            Launch Service Provider: <span style="font-size: 15px; color: #6c757d">{{ launch['launch_service_provider']['name'] }}</span><br>
-                            Datetime: <span style="font-size: 15px; color: #6c757d">{{ launch['format_datetime'] }}</span><br>
-                            Location: <span style="font-size: 15px; color: #6c757d">{{ launch['pad']['name'] }}</span><br>
-                            Status: <span style="font-size: 15px; color: #6c757d">{{ launch['status']['name'] }}</span>
-                        </p>
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p class="mx-auto p-2 text-center">
+                    No launches meet search criteria.
+                </p>
+            {% endif %}
         </div>
     </ul>
 </body>

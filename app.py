@@ -1,6 +1,8 @@
+from collections import Counter
 from flask import Flask, render_template, redirect, url_for, request
 from datetime import datetime
 import requests
+import random
 
 app = Flask(__name__)
 
@@ -20,7 +22,7 @@ def launches():
     provider_filter = request.args.get('provider')
     location_filter = request.args.get('location')
 
-    response = requests.get('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=10')
+    response = requests.get('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=20')
     data = response.json()
     raw_launches = data['results'] # List of dicts representing launches
 
@@ -29,8 +31,30 @@ def launches():
     if location_filter:
         raw_launches = [l for l in raw_launches if l['pad']['name'] == location_filter]
     
+    location_counter = Counter()
+    map_locals = []
+    for launch in raw_launches:
+        pad = launch['pad']
+        lat = float(pad['latitude'])
+        lon = float(pad['longitude'])
+        key = (lat, lon)
+
+        count = location_counter[key]
+        location_counter[key] += 1
+        scatter_strength = 0.3
+
+        lat_offset = lat + (random.uniform(-scatter_strength, scatter_strength) * count)
+        lon_offset = lon + (random.uniform(-scatter_strength, scatter_strength) * count)
+
+
+        map_locals.append({
+            'latitude': lat_offset,
+            'longitude': lon_offset,
+            'status': 'Launched' if launch['status']['name'] == 'Launch Successful' else 'Upcoming'
+        })
+
     formatted_launches = format_launches(raw_launches)
-    return render_template('launches.html', launches=formatted_launches)
+    return render_template('launches.html', launches=formatted_launches, map_locals=map_locals)
 
 
 # REMOVE BEFORE LIVE IMPLEMENTATION
