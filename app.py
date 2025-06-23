@@ -1,3 +1,9 @@
+'''
+This is a Flask app that uses a rocket launch API to extract and process upcoming 
+rocket launches. The extracted data is processed and visualized on the web app with 
+countdowns for each launch.
+'''
+
 from collections import Counter
 from flask import Flask, render_template, redirect, url_for, request
 from datetime import datetime
@@ -77,8 +83,3 @@ def launches():
         page=page,
         total_pages=total_pages
     )
-
-
-# REMOVE BEFORE LIVE IMPLEMENTATION
-if __name__ == '__main__':
-    app.run(debug=True)
