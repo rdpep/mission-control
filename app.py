@@ -25,10 +25,18 @@ def format_launches(raw_launches):
 
 @app.route('/')
 def homepage():
+    '''
+    Redirects to main launch page.
+    '''
     return redirect(url_for('launches'))
 
 @app.route('/launches')
 def launches():
+    '''
+    Assigns desired launch data from extracted API response.
+    Also formats some data for better comprehension/readability.
+    Passes data to launches.html for frontend display.
+    '''
     provider_filter = request.args.get('provider')
     location_filter = request.args.get('location')
     page = int(request.args.get('page', 1))

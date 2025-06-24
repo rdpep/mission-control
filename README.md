@@ -1,5 +1,7 @@
 # Mission Control
 
+Live site: https://missioncontrol1.pythonanywhere.com/launches
+
 A web app that is designed to present upcoming rocket launches around the world! This application uses an API to collect this information, then processes it to present clean, readable information at a glance. Additionally, this app has a visual globe feature that maps the upcoming launches and any that have very recently been launched. As someone with a fascination of space and space exploration, this was an engaging project to build that can help keep me informed of the exploration advancements!
 
 ---
@@ -38,7 +40,7 @@ pip install -r requirements.txt
 
 ## Running the App
 
-Through the website primarily: [ADD LINK WHEN LIVE]
+Through the website primarily: https://missioncontrol1.pythonanywhere.com/launches
 
 Locally:
 ```bash
